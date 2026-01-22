@@ -1,4 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
 import { ArtStyle } from "../components/StyleSelector";
 
 interface TranslateParams {
@@ -10,21 +9,19 @@ interface TranslateParams {
 }
 
 const CACHE: Record<string, string> = {};
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
 export const translateVnToEnPrompt = async ({
   apiKey, vnText, style, grade, lessonName
 }: TranslateParams): Promise<string> => {
   if (!apiKey) {
-    // Fallback if no API key: Simple mapping
     return `Kids drawing of ${lessonName}, ${vnText}, ${style} style, white background, no text`;
   }
 
   const cacheKey = `${grade}|${lessonName}|${style}|${vnText}`;
   if (CACHE[cacheKey]) return CACHE[cacheKey];
 
-  const ai = new GoogleGenAI({ apiKey });
-
-  // Style logic construction
+  // Style logic
   let styleInstruction = "";
   if (style === 'Pencil Line Art' || style === 'Pencil Sketch') {
     styleInstruction = "Strictly black and white outline only, coloring book page style, clean lines, no shading, no gray fill, white background.";
@@ -36,29 +33,30 @@ export const translateVnToEnPrompt = async ({
     styleInstruction = `${style} style, vibrant colors, cheerful atmosphere suitable for grade ${grade} children.`;
   }
 
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash", // Fast model
-      contents: `
-        Role: Expert AI Art Prompter for Primary Education.
-        Task: Convert the following Vietnamese idea into a high-quality English prompt for image generation.
-        
-        Input Idea (Vietnamese): "${vnText}"
-        Context: Grade ${grade} Lesson "${lessonName}"
-        
-        Style Requirements: ${styleInstruction}
-        
-        Global Constraints:
-        - White background (unless specified otherwise in idea).
-        - NO text, NO words, NO watermarks, NO signature.
-        - Safe for kids, educational.
-        - High quality, masterpiece, 8k.
+  const systemInstruction = `Role: Expert AI Art Prompter for Primary Education.
+Task: Convert the following Vietnamese idea into a high-quality English prompt for image generation.
+Constraints: White background (unless specified), NO text, Safe for kids, High quality 8k.
+Style: ${styleInstruction}`;
 
-        Output: ONLY the final English prompt string. Do not include explanations.
-      `,
+  const userPrompt = `Input Idea (Vietnamese): "${vnText}"
+Context: Grade ${grade} Lesson "${lessonName}"
+Output: ONLY the final English prompt string.`;
+
+  try {
+    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: userPrompt }] }],
+        systemInstruction: { parts: [{ text: systemInstruction }] }
+      })
     });
 
-    const result = response.text?.trim() || `Illustration of ${vnText}, ${style} style`;
+    if (!response.ok) throw new Error("Gemini Translation Failed");
+    
+    const data = await response.json();
+    const result = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || `Illustration of ${vnText}, ${style} style`;
+    
     CACHE[cacheKey] = result;
     return result;
 
