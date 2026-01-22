@@ -5,8 +5,9 @@ import { GalleryGrid } from './components/GalleryGrid';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { Header } from './components/Header';
 import { SettingsModal } from './components/SettingsModal';
+import { Footer } from './components/Footer';
 import { Topic, Lesson } from './types';
-import { Menu, Palette, Image as ImageIcon, PlusCircle } from 'lucide-react';
+import { Menu, Image as ImageIcon, PlusCircle } from 'lucide-react';
 
 type Tab = 'create' | 'repository';
 
@@ -119,8 +120,9 @@ const App: React.FC = () => {
         </div>
 
         {/* Scrollable Area */}
+        {/* Added pb-24 to ensure content is not hidden behind the fixed footer */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8 scrollbar-thin">
-          <div className="max-w-7xl mx-auto space-y-6 animate-fadeIn pb-20">
+          <div className="max-w-7xl mx-auto space-y-6 animate-fadeIn pb-24">
             
             {/* VIEW: REPOSITORY */}
             {activeTab === 'repository' && (
@@ -178,6 +180,9 @@ const App: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Fixed Footer */}
+      <Footer grade={selectedGrade} />
     </div>
   );
 };
