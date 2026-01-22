@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Kho Ý Tưởng Sáng Tạo Nhí</title>
+    
+    <!-- PWA iOS Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Xưởng Vẽ Nhí" />
+    <meta name="theme-color" content="#FFFDF9" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'kid-blue': '#4CC9F0',
+              'kid-pink': '#F72585',
+              'kid-yellow': '#FFD60A',
+              'kid-green': '#06D6A0',
+              'kid-purple': '#7209B7',
+              'paper': '#FFFDF9'
+            },
+            fontFamily: {
+              sans: ['Comic Sans MS', 'Cursive', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #FFFDF9;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .blob-shape {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+      }
+      /* Hide scrollbar but keep functionality */
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "firebase/": "https://esm.sh/firebase@^12.8.0/",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "vite-plugin-pwa": "https://esm.sh/vite-plugin-pwa@^1.2.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
